@@ -1,22 +1,12 @@
 using UnityEngine;
 
-public class CharacterGrab : MonoBehaviour
+public class ObjectGrabber : MonoBehaviour
 {
-    public KeyCode grabKey = KeyCode.G; // Key to grab objects
+    public KeyCode grabKey = KeyCode.G; // Key to grab/release objects
     public float grabRange = 1.5f; // Maximum distance to grab objects
     public LayerMask grabbableLayer; // Layer mask for objects that can be grabbed
 
     private Transform heldObject; // Reference to the object being held (if any)
-    private Rigidbody2D characterRigidbody; // Reference to the player's Rigidbody2D component
-
-    void Start()
-    {
-        // Get the player's Rigidbody2D component
-        characterRigidbody = GetComponent<Rigidbody2D>();
-
-        // Freeze rotation along the Z-axis
-        characterRigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
-    }
 
     void Update()
     {
@@ -49,14 +39,14 @@ public class CharacterGrab : MonoBehaviour
             Rigidbody2D objectRigidbody = collider.GetComponent<Rigidbody2D>();
             if (objectRigidbody != null)
             {
-                // Make the object kinematic to prevent it from being affected by physics
-                objectRigidbody.isKinematic = true;
-
                 // Set the held object reference
                 heldObject = collider.transform;
 
                 // Attach the held object to the character's position
                 heldObject.parent = transform;
+
+                // Disable physics interactions with the grabbed object
+                objectRigidbody.simulated = false;
 
                 // Exit the loop after grabbing the first object
                 break;
@@ -72,11 +62,11 @@ public class CharacterGrab : MonoBehaviour
             // Release the held object
             heldObject.parent = null;
 
-            // Make the released object non-kinematic again to enable physics interactions
+            // Enable physics interactions with the released object
             Rigidbody2D objectRigidbody = heldObject.GetComponent<Rigidbody2D>();
             if (objectRigidbody != null)
             {
-                objectRigidbody.isKinematic = false;
+                objectRigidbody.simulated = true;
             }
 
             heldObject = null;
