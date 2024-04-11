@@ -46,18 +46,5 @@ public class EnemyChase : MonoBehaviour
     }
 
     // Check for collision with the player
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            // Get the player's health script
-            PlayerHealth playerHealth = collision.gameObject.GetComponent<PlayerHealth>();
-
-            // If the player's health script is found, apply damage to the player
-            if (playerHealth != null)
-            {
-                playerHealth.TakeDamage(damageAmount);
-            }
-        }
-    }
+    
 }
