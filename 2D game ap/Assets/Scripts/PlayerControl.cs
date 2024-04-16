@@ -36,37 +36,39 @@ public class PlayerControl : MonoBehaviour
         audioSource.clip = walkingSound;
     }
 
-    void Update()
+ void Update()
+{
+    HandleSprinting();
+    UpdateSprintBarUI();
+
+    float horizontalInput = Input.GetAxisRaw("Horizontal");
+    float verticalInput = Input.GetAxisRaw("Vertical");
+
+    // Normalize the movement vector
+    Vector2 movement = new Vector2(horizontalInput, verticalInput).normalized;
+
+    // Set movement based on input
+    rb.velocity = movement * movSpeed;
+
+    // Set animator parameters
+    if (animator != null)
     {
-        HandleSprinting();
-        UpdateSprintBarUI();
-
-        float horizontalInput = Input.GetAxisRaw("Horizontal");
-        float verticalInput = Input.GetAxisRaw("Vertical");
-
-        // Set movement based on input
-        Vector2 movement = new Vector2(horizontalInput, verticalInput).normalized;
-        rb.velocity = movement * movSpeed;
-
-        // Set animator parameters
-        if (animator != null)
-        {
-            animator.SetFloat("Horizontal", horizontalInput);
-            animator.SetFloat("Vertical", verticalInput);
-            animator.SetFloat("Speed", movement.sqrMagnitude);
-        }
-
-        // Play walking sound effect when the player moves
-        if (movement != Vector2.zero && !audioSource.isPlaying)
-        {
-            audioSource.Play();
-        }
-        // Stop playing walking sound effect when the player stops moving
-        else if (movement == Vector2.zero && audioSource.isPlaying)
-        {
-            audioSource.Stop();
-        }
+        animator.SetFloat("Horizontal", horizontalInput);
+        animator.SetFloat("Vertical", verticalInput);
+        animator.SetFloat("Speed", movement.magnitude); // Using magnitude instead of sqrMagnitude
     }
+
+    // Play walking sound effect when the player moves
+    if (movement != Vector2.zero && !audioSource.isPlaying)
+    {
+        audioSource.Play();
+    }
+    // Stop playing walking sound effect when the player stops moving
+    else if (movement == Vector2.zero && audioSource.isPlaying)
+    {
+        audioSource.Stop();
+    }
+}
 
 
     void HandleSprinting()
